@@ -1,5 +1,4 @@
 # slimplectic
-=============
 
 `slimplectic` is a `python` implementation of the discrete non-conservative numerical integrator
 of Tsang, Galley, Stein, and Turner (2015) [[arXiv:SOON]](http://arxiv.org/abs/SOON). It is based
