@@ -19,6 +19,7 @@ Coming soon...
 * [`numpy`](http://www.numpy.org/)
 * [`scipy`](http://scipy.org/)
 * [`sympy`](http://www.sympy.org/)
+
 The example notebooks also require
 * [`ipython`](http://ipython.org/)
 * [`matplotlib`](http://matplotlib.org/)
