@@ -6,7 +6,6 @@ import slimplectic_GGL as ggl, numpy as np
 #         variational integrator          #
 ###########################################
 
-#class VariationalIntegrator(object):
 class GalerkinGaussLobatto(object):
   
   def __init__(self, t, q_list, v_list):
@@ -92,16 +91,18 @@ class RungeKutta4(object):
     self._k[3] = f(tn+h, yn_list+h*self._k[2])
     return yn_list + h*np.sum(self._b[ii]*self._k[ii] for ii in range(4))
     
-  def integrate(self, y0_list, t, f):
+  def integrate(self, q0_list, v0_list, t, f):
+    y0_list = np.hstack([q0_list, v0_list])
     h = t[1]-t[0]
     ans = np.zeros((t.size, len(y0_list)))
     ans[0,:] = y0_list
     for ii, tt in enumerate(t[:-1]):
       ans[ii+1,:] = self._iter(tt, ans[ii], f, h)    
-    return ans.T
+    out = ans.T
+    return out[:len(q0_list)], out[len(q0_list):]
   
-  def __call__(self, y0, t, f):
-    return self.integrate(y0, t, f)
+  def __call__(self, q0, v0, t, f):
+    return self.integrate(q0, v0, t, f)
 
 
 ##########################################
@@ -119,14 +120,17 @@ class RungeKutta2(object):
     self._k[1] = f(tn+h/2., yn_list+h/2.*self._k[0])
     return yn_list + h*np.sum(self._b[ii]*self._k[ii] for ii in range(2))
     
-  def integrate(self, y0_list, t, f):
+  def integrate(self, q0_list, v0_list, t, f):
+    y0_list = np.hstack([q0_list, v0_list])
     h = t[1]-t[0]
     ans = np.zeros((t.size, len(y0_list)))
     ans[0,:] = y0_list
     for ii, tt in enumerate(t[:-1]):
       ans[ii+1,:] = self._iter(tt, ans[ii], f, h)    
-    return ans.T
+    #return ans.T
+    out = ans.T
+    return out[:len(q0_list)], out[len(q0_list):]
   
-  def __call__(self, y0, t, f):
-    return self.integrate(y0, t, f)
+  def __call__(self, q0, v0, t, f):
+    return self.integrate(q0, v0, t, f)
 
