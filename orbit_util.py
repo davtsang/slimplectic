@@ -179,7 +179,18 @@ def Calc_Cartesian(a, e, i, Omega, omega, M, mu, tol = 1e-15):
     
     return r, v
     
-        
-        
-    
-    
+
+# Function to get phase of data in x+Iy form
+def phase(x, y):
+  """Get phase of complex array, z = A*exp(i*phi)"""
+  z = x + 1j*y
+  if numpy.shape(z):
+    # Compute the phase only for non-zero values of h, otherwise set phase to zero.
+    nonzero_z = z[numpy.abs(z) > 1e-300]
+    phase = numpy.zeros(len(z), dtype='double')
+    phase[:len(nonzero_z)] = numpy.unwrap(numpy.real(-1j*numpy.log(nonzero_z/numpy.abs(nonzero_z))))
+  else:
+    nonzero_z = z
+    phase = numpy.real(-1j*numpy.log(nonzero_z/numpy.abs(nonzero_z)))
+  return phase
+  
