@@ -1,3 +1,5 @@
+<a href="LICENSE"><img align="right" hspace="3" alt="Code distributed under the open-source MIT license" src="http://img.shields.io/:license-mit-blue.svg"></a>
+
 # slimplectic
 
 `slimplectic` is a `python` implementation of the discrete non-conservative numerical integrator
