@@ -11,7 +11,12 @@ to our earlier paper on a stationary action principle for non-conservative dynam
 
 ## Quick start
 
-Coming soon...
+Coming soon... for now, why not try following along with one of the
+[three](Damped_Oscillator_SlimplecticGGLvsRK.ipynb)
+[example](Poynting-Robertson_Cartesian-Long.ipynb)
+[notebooks](PostNewtonian_Inspiral_with_RK.ipynb)?
+
+![Screen shot of `slimplectic` `ipython` notebook](/../screenshots/screen1.png)
 
 ## Dependencies
 
