@@ -841,15 +841,15 @@ def Gen_GGL_NC_VI_Map(t_symbol,
                 qi_0.append(q_n_vec[i])
         qi_0 = numpy.array(qi_0)
 
-        qi_sol = scipy.optimize.root(**dict({'fun': EOM_Val_Vec,
+        qi_sol = scipy.optimize.root(**dict(list({'fun': EOM_Val_Vec,
                                            'x0': qi_0,
                                            'args': (q_n_vec,
                                                     pi_n_vec,
                                                     tval,
                                                     ddt),
                                            'jac': EOM_J_Matrix
-                                          }.items()
-                                            + root_args.items()
+                                          }.items())
+                                            + list(root_args.items())
                                          )
                                     )
         return qi_sol.x
