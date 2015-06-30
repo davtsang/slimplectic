@@ -3,7 +3,7 @@
 # slimplectic
 
 `slimplectic` is a `python` implementation of the discrete non-conservative numerical integrator
-of Tsang, Galley, Stein, and Turner (2015) [[arXiv:SOON]](http://arxiv.org/abs/SOON). It is based
+of Tsang, Galley, Stein, and Turner (2015) [[arXiv:1506.08443]](http://arxiv.org/abs/1506.08443). It is based
 on applying a discrete variational integrator approach
 (e.g. [Marsden and West (2001)](http://lagrange.mechse.illinois.edu/pubs/MaWe2001/))
 to our earlier paper on a stationary action principle for non-conservative dynamics
