@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, print_function
 from sympy import *
 import numpy
 import scipy.optimize
