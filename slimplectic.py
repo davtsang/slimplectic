@@ -9,6 +9,16 @@ import slimplectic_GGL as ggl, numpy as np
 class GalerkinGaussLobatto(object):
 
   def __init__(self, t, q_list, v_list, mod_list = False):
+    """GalerkinGaussLobatto class:
+    args: t : string for generating the sympy symbol the independent "time" variable
+          q_list : list of strings for generating symbols for dof q
+          v_list : list of strings for generating symbols for \dot{q}
+          mod_list : list of values to mod the q values by for periodic variables
+                     if not periodic, the value is set to False (default). 
+                     
+    methods: discretize : creates the variational integrator maps
+             integrate: applies the maps created by discretize
+    """
     # Validate inputs
     assert type(t) is str, "String input required."
     assert len(q_list) == len(v_list), "Unequal number of coordinates and velocities."
@@ -42,14 +52,29 @@ class GalerkinGaussLobatto(object):
     return self.__dict__.keys()
 
   def discretize(self, L, K, order, method='explicit', verbose=False):
-    """Generate the nonconservative variational integrator maps"""
+    """Generate the nonconservative variational integrator maps
+    by setting the methods _qi_soln_map, _q_np1_map, _pi_np1_map, _qdot_n_map
+    args: L : sympy expression for the conservative Lagrangian. Should be in 
+              terms of the self.q and self.v variables
+          K : sympy expression for the nonconservative potential. Should be in 
+              terms of the self.qp/m and self.vp/m variables
+          order: integer order (r) of the GGL method (r+2 is the total order of the method)
+          method: string 'implicit' or 'explicit' evaluation (default explicit)
+          verbose: Boolean. True to output mapping expressions (default False)
+    output: none
+    """
     self._qi_soln_map, self._q_np1_map, self._pi_np1_map, self._qdot_n_map = ggl.Gen_GGL_NC_VI_Map(self.t, \
                               self.q, self.qp, self.qm, \
                               self.v, self.vp, self.vm, \
                               L, K, order, method=method, verbose=verbose)
 
   def integrate(self, q0_list, pi0_list, t):
-    """Numerical integration from given initial data"""
+    """Numerical integration from given initial data
+    args: q0_list: list of initial q values (floats)
+          pi0_list: list of initial pi (nonconservative momentum) values (floats)
+          t: list of t values (floats) over which to integrate the system. 
+    output: q_list_soln.T, pi_list_soln.T the integrated q and pi arrays at each time.
+    """
 
     # Check if total Lagrangian is discretized already
     if not hasattr(self, '_qi_soln_map'):
