@@ -67,8 +67,8 @@ def q_Generate_pm(qlist):
     qplist = []
     qmlist = []
     for i in range(len(qlist)):
-        qplist.append(Symbol(repr(qlist[i]) + '_+'))
-        qmlist.append(Symbol(repr(qlist[i]) + '_-'))
+        qplist.append(Symbol(repr(qlist[i]) + '_+', real=True))
+        qmlist.append(Symbol(repr(qlist[i]) + '_-', real=True))
     return qplist, qmlist
 
 
@@ -85,8 +85,8 @@ def Gen_pi_list(qlist):
     pi_n_list = []
     pi_np1_list = []
     for i in range(len(qlist)):
-        pi_n_list.append(Symbol("\pi_" + repr(qlist[i]) + "^{[n]}"))
-        pi_np1_list.append(Symbol("\pi_" + repr(qlist[i]) + "^{[n+1]}"))
+        pi_n_list.append(Symbol("\pi_" + repr(qlist[i]) + "^{[n]}", real=True))
+        pi_np1_list.append(Symbol("\pi_" + repr(qlist[i]) + "^{[n+1]}", real=True))
     return pi_n_list, pi_np1_list
 
 
@@ -481,7 +481,7 @@ def Gen_GGL_NC_VI_Map(t_symbol,
                       r,
                       sym_paramlist = [],
                       sym_precision = 20,
-                      eval_modules = [numpy],
+                      eval_modules = "numpy",
                       method = 'implicit',
                       verbose = True,
                       verbose_rational = True
@@ -893,7 +893,7 @@ def Gen_GGL_NC_VI_Map(t_symbol,
 
 
     pi_Func_Vec = [lambdify(full_variable_list,
-                            expr, modules = [numpy])
+                            expr, modules = eval_modules)
                             for expr in pi_n_expr]
 
 
