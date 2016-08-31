@@ -31,9 +31,9 @@ class GalerkinGaussLobatto(object):
       assert type(v_list[ii]) is str, "String input required."
 
     # Make sympy variables
-    self.t = ggl.Symbol(t)
-    self.q = [ggl.Symbol(qq) for qq in q_list]
-    self.v = [ggl.Symbol(vv) for vv in v_list]
+    self.t = ggl.Symbol(t, real=True)
+    self.q = [ggl.Symbol(qq, real=True) for qq in q_list]
+    self.v = [ggl.Symbol(vv, real=True) for vv in v_list]
 
     # Double the sympy variables
     self.qp, self.qm = ggl.q_Generate_pm(self.q)
@@ -68,12 +68,18 @@ class GalerkinGaussLobatto(object):
                               self.v, self.vp, self.vm, \
                               L, K, order, method=method, verbose=verbose)
 
-  def integrate(self, q0_list, pi0_list, t):
+  def integrate(self, q0_list, pi0_list, t, dt=False, output_v=False):
     """Numerical integration from given initial data
     args: q0_list: list of initial q values (floats)
           pi0_list: list of initial pi (nonconservative momentum) values (floats)
           t: list of t values (floats) over which to integrate the system. 
+          dt: defaults to the difference between the first two elements of the t array. Otherwise
+              the stepsize must be specified as a float.
+          output_v: Boolean value, if True, output will be 
+                    q_list_soln.T, pi_list_soln.T, qdot_list_soln.T
+                    defaults to False
     output: q_list_soln.T, pi_list_soln.T the integrated q and pi arrays at each time.
+            unless output_v is True
     """
 
     # Check if total Lagrangian is discretized already
@@ -86,8 +92,9 @@ class GalerkinGaussLobatto(object):
 
     # Allocate memory for solutions
     t_len = t.size
-    q_list_soln = np.zeros((t_len, self._num_dof))
-    pi_list_soln = np.zeros((t_len, self._num_dof))
+    q_list_soln = np.zeros((t_len+1, self._num_dof))
+    pi_list_soln = np.zeros((t_len+1, self._num_dof))
+    qdot_list_soln = np.zeros((t_len+1, self._num_dof))
 
     # Set initial data
     q_list_soln[0,:] = q0_list
@@ -101,9 +108,12 @@ class GalerkinGaussLobatto(object):
 
 
     # Perform the integration at fixed time steps
-    dt = t[1]-t[0]
-    for ii in range(1, t_len):
-        args = [q_list_soln[ii-1], pi_list_soln[ii-1], t[ii-1], dt]
+    if dt:
+        ddt = dt
+    else:
+        ddt = t[1]-t[0]
+    for ii in range(1, t_len+1):
+        args = [q_list_soln[ii-1], pi_list_soln[ii-1], t[ii-1], ddt]
         qi_sol = self._qi_soln_map(*args)
         q_list_soln[ii] = self._q_np1_map(qi_sol, *args)
         # mod the value of any periodic variables that have mod value specified
@@ -113,9 +123,13 @@ class GalerkinGaussLobatto(object):
             if mod:
                 q_list_soln[ii,jj] = q_list_soln[ii,jj]%mod
         pi_list_soln[ii] = self._pi_np1_map(qi_sol, *args)
+        if output_v:
+            qdot_list_soln[ii-1] = self._qdot_n_map(qi_sol, *args)
 
     # Return the numerical solutions
-    return q_list_soln.T, pi_list_soln.T
+    if output_v:
+        return q_list_soln[:-1].T, pi_list_soln[:-1].T, qdot_list_soln[:-1].T
+    return q_list_soln[:-1].T, pi_list_soln[:-1].T
 
   def __call__(self, qi_list, vi_list, t):
     return self.integrate(qi_list, vi_list, t)
