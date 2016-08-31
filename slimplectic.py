@@ -68,7 +68,7 @@ class GalerkinGaussLobatto(object):
                               self.v, self.vp, self.vm, \
                               L, K, order, method=method, verbose=verbose)
 
-  def integrate(self, q0_list, pi0_list, t, dt=False, output_v=False):
+  def integrate(self, q0_list, pi0_list, t, dt=False, output_v=False, output_File=False, t_out = [False], print_steps = 1):
     """Numerical integration from given initial data
     args: q0_list: list of initial q values (floats)
           pi0_list: list of initial pi (nonconservative momentum) values (floats)
@@ -78,6 +78,9 @@ class GalerkinGaussLobatto(object):
           output_v: Boolean value, if True, output will be 
                     q_list_soln.T, pi_list_soln.T, qdot_list_soln.T
                     defaults to False
+          outputFile: string for the output file. Defaults to False and no file is produced.
+          t_out: sets the output t_array for the output_File. Defaults to same as t
+          print_steps: outputs to file every print_steps steps. Defaults to 1. 
     output: q_list_soln.T, pi_list_soln.T the integrated q and pi arrays at each time.
             unless output_v is True
     """
@@ -96,6 +99,10 @@ class GalerkinGaussLobatto(object):
     pi_list_soln = np.zeros((t_len+1, self._num_dof))
     qdot_list_soln = np.zeros((t_len+1, self._num_dof))
 
+    #Open output file if necessary
+    if output_File:
+      outfile = open(output_File, "w")
+    
     # Set initial data
     q_list_soln[0,:] = q0_list
     # mod the value of any periodic variables that have mod value specified
@@ -106,6 +113,18 @@ class GalerkinGaussLobatto(object):
             q_list_soln[0,jj] = q_list_soln[0,jj]%mod
     pi_list_soln[0,:] = pi0_list
 
+    if output_File:
+        outstring = 'step'
+        outstring += ', t'
+        for dof in range(len(q_list_soln[0])):
+          outstring += ', {:s}'.format(str(self.q[dof]))
+        for dof in range(len(pi_list_soln[0])):
+          outstring += ', pi_{:s}'.format(str(self.q[dof]))
+        if output_v:
+          for dof in range(len(q_list_soln[0])):
+            outstring += ', {:s}'.format(str(self.v[dof]))
+        outfile.write(outstring + '\n')
+        outfile.flush()
 
     # Perform the integration at fixed time steps
     if dt:
@@ -126,6 +145,22 @@ class GalerkinGaussLobatto(object):
         if output_v:
             qdot_list_soln[ii-1] = self._qdot_n_map(qi_sol, *args)
 
+        if output_File:
+          if (ii - 1) % print_steps == 0:
+            outstring = '{:d}'.format(ii-1)
+            if isinstance(t_out[0], float):
+              outstring += ', {:.15e}'.format(t_out[ii-1])
+            else:
+              outstring += ', {:.15e}'.format(t[ii-1])
+            for q_val in q_list_soln[ii-1]:
+                outstring += ', {:.15e}'.format(q_val)
+            for pi_val in pi_list_soln[ii-1]:
+              outstring += ', {:.15e}'.format(pi_val)
+            if output_v:
+              for qdot_val in qdot_list_soln[ii-1]:
+                outstring += ', {:.15e}'.format(qdot_val)
+            outfile.write(outstring + '\n')
+            outfile.flush()
     # Return the numerical solutions
     if output_v:
         return q_list_soln[:-1].T, pi_list_soln[:-1].T, qdot_list_soln[:-1].T
