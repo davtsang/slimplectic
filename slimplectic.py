@@ -79,6 +79,7 @@ class GalerkinGaussLobatto(object):
                     q_list_soln.T, pi_list_soln.T, qdot_list_soln.T
                     defaults to False
           outputFile: string for the output file. Defaults to False and no file is produced.
+                      output is in csv format, with first line the column labels. 
           t_out: sets the output t_array for the output_File. Defaults to same as t
           print_steps: outputs to file every print_steps steps. Defaults to 1. 
     output: q_list_soln.T, pi_list_soln.T the integrated q and pi arrays at each time.
