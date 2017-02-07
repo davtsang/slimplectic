@@ -1,3 +1,4 @@
+<a href="http://ascl.net/1507.005"><img align="right" src="https://img.shields.io/badge/ascl-1507.005-blue.svg?colorB=262255" alt="ascl:1507.005" /></a>
 <a href="LICENSE"><img align="right" hspace="3" alt="Code distributed under the open-source MIT license" src="http://img.shields.io/:license-mit-blue.svg"></a>
 
 # slimplectic
